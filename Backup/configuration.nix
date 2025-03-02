@@ -140,6 +140,7 @@
 	cowsay
 	steam
 	hyprshot
+	vscodium
 	#AMD specific Drivers
 	driversi686Linux.amdvlk
 	nvtopPackages.panthor
@@ -165,6 +166,8 @@
 		html2text
 		pycrypto
 		nmapthon2
+		flask
+		pygame
 		]
 	)
 	)
