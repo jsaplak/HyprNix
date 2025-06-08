@@ -1,16 +1,9 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
-
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
-
-
   # Bootloader.
   # Boot into Other Linux installs by disabling systemd and enabling GRUB and OS probe
   boot.loader.systemd-boot.enable = false;
@@ -19,24 +12,32 @@
   boot.loader.grub.devices = [ "nodev" ];
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.useOSProber = true;
+  boot.loader.grub.theme = "${
+          (pkgs.fetchFromGitHub {
+            owner = "semimqmo";
+            repo = "sekiro_grub_theme";
+            rev = "1affe05f7257b72b69404cfc0a60e88aa19f54a6";
+            hash = "sha256-wTr5S/17uwQXkWwElqBKIV1J3QUP6W2Qx2Nw0SaM7Qk=";
+          })
+	  }/Sekiro";
+	
+
+
+  boot.loader.timeout = 60;
   boot.loader.efi.efiSysMountPoint = "/boot";
   
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
-
   # Set your time zone.
   time.timeZone = "America/New_York";
-
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
     LC_IDENTIFICATION = "en_US.UTF-8";
@@ -52,9 +53,7 @@
   hardware.graphics = {
     enable = true;
   };
-
   services.xserver.videoDrivers = ["nvidia"];
-
   hardware = {
     nvidia = {
       modesetting.enable = true;
@@ -73,9 +72,6 @@
       };
   };
 
-
-
-
   # Hyprland Config
   programs.hyprland = {
     enable = true;
@@ -87,23 +83,16 @@
     # Hint electron apps to use wayland
     NIXOS_OZONE_WL = "1";
     };
-
-
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
@@ -118,9 +107,6 @@
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
-  
-  # Enable touchpad support (enabled default in most desktopManager).
-  #services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nixl = {
@@ -129,7 +115,6 @@
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
     #  thunderbird
-    neovim 
     google-chrome
     vscodium
     ];
@@ -144,6 +129,9 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+ 
+
+
 
   services.ollama = {
   enable = true;
@@ -157,8 +145,8 @@
   ];
 
   environment.systemPackages = with pkgs; [
-  	#-Nvim Envir
-	neovim
+	neovim	
+	jdk
 	ripgrep
 	git
 	gh
@@ -190,7 +178,6 @@
 	#-Software Dev tools 
 	libgcc
 	gnumake42
-	git
 	(
 	python3.withPackages (
 		p: with p; [
@@ -227,6 +214,8 @@
 	swww
 	rofi-wayland
 	phinger-cursors
+	brightnessctl
+	hyprpaper
 
     (pkgs.waybar.overrideAttrs (oldAttrs: {
     	mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
