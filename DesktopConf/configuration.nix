@@ -24,8 +24,8 @@
 
   hardware.graphics = {
     enable = true;
-    enable32bit = true;
-  }
+    enable32Bit = true;
+  };
 
   services.xserver.enable = true;
 
@@ -68,6 +68,12 @@
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
+
+  fileSystems."/mnt/Storage" = {
+    device = "/dev/disk/by-uuid/A088A73C88A70FB8";
+    fsType = "ntfs";
+    options = ["rw" "uid=1000" "gid=100" "nofail"];
+  };
   
   users.users.nixd = {
     isNormalUser = true;
@@ -112,6 +118,7 @@
 	vscodium
 	prismlauncher
 	#-Coreutils
+	ntfs3g
 	cpufrequtils
 	grub2
 	hdparm
