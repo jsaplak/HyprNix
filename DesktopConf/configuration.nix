@@ -22,12 +22,19 @@
 
   i18n.defaultLocale = "en_CA.UTF-8";
 
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
+    };
+
+  boot.initrd.kernelModules = [ "amdgpu" ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
 
   services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "amdgpu" ];
 
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
@@ -125,10 +132,12 @@
 	iverilog
 	pciutils
 	lshw
+	amdgpu_top
+	amdvlk
 	#-Software Dev tools 
 	#libgcc
 	#gnumake42
-  jdk
+	jdk
 	(
 	python3.withPackages (
 		p: with p; [
@@ -165,7 +174,7 @@
 	swww
 	rofi-wayland
 	phinger-cursors
-  brightnessctl
+	brightnessctl
 
     (pkgs.waybar.overrideAttrs (oldAttrs: {
     	mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
