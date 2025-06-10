@@ -1,42 +1,22 @@
 { config, pkgs, ... }:
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [ 
       ./hardware-configuration.nix
     ];
-  # Bootloader.
-  # Boot into Other Linux installs by disabling systemd and enabling GRUB and OS probe
   boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = true;
   boot.loader.grub.devices = [ "nodev" ];
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.useOSProber = true;
-  boot.loader.grub.theme = "${
-          (pkgs.fetchFromGitHub {
-            owner = "semimqmo";
-            repo = "sekiro_grub_theme";
-            rev = "1affe05f7257b72b69404cfc0a60e88aa19f54a6";
-            hash = "sha256-wTr5S/17uwQXkWwElqBKIV1J3QUP6W2Qx2Nw0SaM7Qk=";
-          })
-	  }/Sekiro";
-	
-
-
   boot.loader.timeout = 60;
   boot.loader.efi.efiSysMountPoint = "/boot";
   
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  networking.hostName = "nixos"; 
 
-  # Enable networking
   networking.networkmanager.enable = true;
-  # Set your time zone.
   time.timeZone = "America/New_York";
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -50,6 +30,11 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
+    };
+  
   hardware.graphics = {
     enable = true;
   };
@@ -65,14 +50,13 @@
       
       prime = {
         offload.enable = false;
-        sync.enable = true;
+        sync.enable = false;
         intelBusId = "PCI:0:2:0";
         nvidiaBusId = "PCI:1:0:0";
         };    
       };
   };
 
-  # Hyprland Config
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -83,18 +67,15 @@
     # Hint electron apps to use wayland
     NIXOS_OZONE_WL = "1";
     };
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
-  # Enable the GNOME Desktop Environment.
+
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -108,13 +89,11 @@
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nixl = {
     isNormalUser = true;
     description = "nixl";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    #  thunderbird
     google-chrome
     vscodium
     ];
@@ -130,9 +109,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
  
-
-
-
   services.ollama = {
   enable = true;
   acceleration = "cuda";
